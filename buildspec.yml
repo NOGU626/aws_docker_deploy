@@ -1,0 +1,22 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+    commands:
+      - echo install step...
+  pre_build:
+    commands:
+      - echo logging in to AWS ECR...
+      - $(aws ecr get-login --no-include-email --region ap-northeast-1)
+  build:
+    commands:
+      - echo build Docker image on `date`
+      - echo Building the Docker image...
+      - docker build -t my_python_project:latest .
+      - docker tag my_python_project:latest 383896490246.dkr.ecr.ap-northeast-1.amazonaws.com/my_python_project:latest
+  post_build:
+    commands:
+      - echo build Docker image complete `date`
+      - echo push latest Docker images to ECR...
+      - docker push 383896490246.dkr.ecr.ap-northeast-1.amazonaws.com/my_python_project:latest
